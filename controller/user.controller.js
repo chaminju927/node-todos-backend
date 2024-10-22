@@ -8,18 +8,20 @@ userController.createUser = async (req, res) => {
   try {
     const { email, name, password } = req.body;
     const user = await User.findOne({ email });
+    console.log(user);
     if (user) {
-      throw new Error("이미 가입된 유저");
+      console.log("already", user);
+      throw new Error("이미 가입된 유저입니다.");
+    } else {
+      const salt = bcrypt.genSaltSync(saltRounds);
+      const hash = bcrypt.hashSync(password, salt); //암호화된 값
+      const newUser = new User({ email, name, password: hash });
+
+      await newUser.save();
+      res.status(200).json({ status: "success!!" });
     }
-
-    const salt = bcrypt.genSaltSync(saltRounds);
-    const hash = bcrypt.hashSync(password, salt); //암호화된 값
-    const newUser = new User({ email, name, password: hash });
-
-    await newUser.save();
-    res.status(200).json({ status: "success!!" });
   } catch (error) {
-    res.status(400).json({ status: "Fail", error });
+    res.status(400).json({ status: "Fail", message: error.message });
   }
 };
 
@@ -34,7 +36,7 @@ userController.loginWithEmail = async (req, res) => {
         return res.status(200).json({ status: "success", user, token });
       }
     }
-    throw new Error("아이디나 비밀번호 불일치");
+    throw new Error("아이디나 비밀번호를 확인해주세요.");
   } catch (error) {
     res.status(400).json({ status: "fail", message: error.message });
   }

@@ -13,10 +13,7 @@ app.use("/api", indexRouter); // api라는 주소로 호출 오면 indexrouter�
 const mongoURI = MONGODB_URI_PROD;
 
 mongoose
-  .connect(
-    mongoURI
-    //, { useNewUrlParser: true }
-  )
+  .connect(mongoURI)
   .then(() => {
     console.log("db connected");
   })
