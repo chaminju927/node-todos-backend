@@ -8,9 +8,8 @@ userController.createUser = async (req, res) => {
   try {
     const { email, name, password } = req.body;
     const user = await User.findOne({ email });
-    console.log(user);
+
     if (user) {
-      console.log("already", user);
       throw new Error("이미 가입된 유저입니다.");
     } else {
       const salt = bcrypt.genSaltSync(saltRounds);
